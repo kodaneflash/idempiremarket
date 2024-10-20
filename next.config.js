@@ -9,14 +9,26 @@ const nextConfig = {
         port: "3000",
       },
       {
-        hostname: "digibee.up.railway.app",
+        hostname: "https://idempiremarket.onrender.com",
         protocol: "https",
       },
       {
-        hostname: "digibee-mediafiles.s3.ap-south-1.amazonaws.com",
+        hostname: "idempires3bucketname.s3.us-east-2.amazonaws.com",
         protocol: "https",
       },
     ],
+  },
+  webpack: (config, { isServer }) => {
+    // Ignore warnings about require.extensions
+    config.ignoreWarnings = [
+      { module: /node_modules\/payload\/dist\/config\/load\.js$/ },
+      { module: /node_modules\/express\/lib\/view\.js$/ },
+    ];
+
+    // Disable caching
+    config.cache = false;
+
+    return config;
   },
 };
 
