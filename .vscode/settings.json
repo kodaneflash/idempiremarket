@@ -1,0 +1,20 @@
+{
+  "cSpell.words": [
+    "auths",
+    "cliui",
+    "copyconfig",
+    "copyfiles",
+    "Digi",
+    "digibee",
+    "filesize",
+    "mediafiles",
+    "OKHDLSG",
+    "payloadcms",
+    "precheck",
+    "Swiper",
+    "vigneshfixes"
+  ],
+  "conventionalCommits.scopes": [
+    "order"
+  ]
+}
