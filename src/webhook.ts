@@ -25,17 +25,17 @@ export const stripeWebhookHandler = async (
       process.env.STRIPE_WEBHOOK_SECRET || ""
     );
   } catch (err) {
-    return res
-      .status(400)
-      .send(
-        `Webhook Error: ${err instanceof Error ? err.message : "Unknown Error"}`
-      );
+    res.status(400).send(
+      `Webhook Error: ${err instanceof Error ? err.message : "Unknown Error"}`
+    );
+    return;
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
 
   if (!session?.metadata?.userId || !session?.metadata?.orderId) {
-    return res.status(400).send(`Webhook Error: No user present in metadata`);
+    res.status(400).send(`Webhook Error: No user present in metadata`);
+    return;
   }
 
   if (event.type === "checkout.session.completed") {
@@ -52,7 +52,10 @@ export const stripeWebhookHandler = async (
 
     const [user] = users;
 
-    if (!user) return res.status(404).json({ error: "No such user exists." });
+    if (!user) {
+      res.status(404).json({ error: "No such user exists." });
+      return;
+    }
 
     const { docs: orders } = await payload.find({
       collection: "orders",
@@ -66,7 +69,10 @@ export const stripeWebhookHandler = async (
 
     const [order] = orders;
 
-    if (!user) return res.status(404).json({ error: "No such order exists." });
+    if (!order) {
+      res.status(404).json({ error: "No such order exists." });
+      return;
+    }
 
     await payload.update({
       collection: "orders",
@@ -99,5 +105,5 @@ export const stripeWebhookHandler = async (
     }
   }
 
-  return res.status(200).send();
+  res.status(200).send();
 };
