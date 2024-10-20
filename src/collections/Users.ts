@@ -15,21 +15,26 @@ const adminAndUserOnly: Access = ({ req: { user } }) => {
 
 const createCart: AfterChangeHook<User> = async ({ operation, req, doc }) => {
   if (operation === "create") {
-    const cart = await req.payload.create({
-      collection: "cart",
-      data: {
-        user: doc.id,
-        products: [],
-      },
-    });
+    try {
+      const cart = await req.payload.create({
+        collection: "cart",
+        data: {
+          user: doc.id,
+          products: [],
+        },
+      });
 
-    await req.payload.update({
-      collection: "users",
-      id: doc.id,
-      data: {
-        cart: cart.id,
-      },
-    });
+      await req.payload.update({
+        collection: "users",
+        id: doc.id,
+        data: {
+          cart: cart.id,
+        },
+      });
+    } catch (error) {
+      console.error('Error in createCart hook:', error);
+      // Don't throw the error, just log it
+    }
   }
 };
 
@@ -60,8 +65,8 @@ const Users: CollectionConfig = {
   access: {
     read: adminAndUserOnly,
     create: (): boolean => true,
-    update: ({ req }) => req.user.role === "admin",
-    delete: ({ req }) => req.user.role === "admin",
+    update: ({ req }) => req.user?.role === "admin",
+    delete: ({ req }) => req.user?.role === "admin",
   },
   admin: {
     hidden: ({ user }) => user.role !== "admin",
